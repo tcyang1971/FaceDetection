@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
@@ -30,6 +32,25 @@ class MainActivity : AppCompatActivity() {
 
         //Prepare the input image
         val image = InputImage.fromBitmap(bitmap, 0)
+        //Create an Instance of a Face Detector
         val detector = FaceDetection.getClient(options)
+
+        //Send Image to the Face Detector and Process the Image
+        btn.setOnClickListener(object:View.OnClickListener{
+            override fun onClick(p0: View?) {
+                detector.process(image)
+                    .addOnSuccessListener { faces ->
+                        // call draw canvas class
+                        Toast.makeText(baseContext, "偵測到人臉數："+faces.size.toString(),
+                            Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        // Task failed with an exception
+                        Toast.makeText(baseContext, "抱歉，發生錯誤！",
+                            Toast.LENGTH_SHORT).show()
+                    }
+            }
+
+        })
     }
 }
