@@ -1,7 +1,6 @@
 package tw.edu.pu.csim.tcyang.facedetection
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -40,7 +39,29 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(p0: View?) {
                 detector.process(image)
                     .addOnSuccessListener { faces ->
-                        // call draw canvas class
+                        val dstBitmap = Bitmap.createBitmap(
+                            bitmap.width, bitmap.height,
+                            Bitmap.Config.ARGB_8888
+                        )
+                        var canvas = Canvas(dstBitmap)
+
+                        //繪製原始圖片
+                        canvas.drawBitmap(bitmap, 0f, 0f, null)
+
+                        //設定畫筆
+                        val paint = Paint()
+                        paint.color = Color.RED
+                        paint.style = Paint.Style.STROKE
+                        paint.strokeWidth = 20f
+
+                        //繪製邊框
+                        for (item in faces) {
+                            val box = item.boundingBox
+                            canvas.drawRect(box, paint)
+                        }
+
+                        img.setImageBitmap(dstBitmap)
+
                         Toast.makeText(baseContext, "偵測到人臉數："+faces.size.toString(),
                             Toast.LENGTH_SHORT).show()
                     }
